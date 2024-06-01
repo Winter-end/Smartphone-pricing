@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Smartphone Pricing</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <style>
     /* Center the form horizontally */
@@ -19,21 +20,64 @@
     label, input, select {
         margin-bottom: 10px;
     }
+
+    /* Style for the Add button */
+    #add-input {
+        float: left;
+    }
 </style>
 <body>
-    <form method="POST">
+    <form method="POST" id="myForm">
         <label for="os">Operating System:</label><br>
         <select name="os" id="os">
             <option value="android">Android</option>
             <option value="ios">iOS</option>
         </select><br>
+
+        <label for="front_camera">Front camera (MP):</label><br>
+        <input type="text" id="front_camera" name="front_camera"><br>        
+
         <label for="ram">Ram size (GB):</label><br>
         <input type="text" id="ram" name="ram"><br>
+        
         <label for="battery">Battery capacity (mAh):</label><br>
         <input type="text" id="battery" name="battery"><br>
+        
         <label for="storage">Storage size (GB):</label><br>
         <input type="text" id="storage" name="storage"><br>
+        
+        <label for="score">Processor score (from 11 to 98):</label><br>
+        <input type="score" id="score" name="score"><br>        
+        
+        <label for="screen_size">Screen size ("):</label><br>
+        <input type="text" id="screen_size" name="screen_size"><br> 
+        
+        <label for="refresh_rate">Refresh rate:</label><br>
+        <select name="refresh_rate" id="refresh_rate">
+            <option value=60>60</option>
+            <option value=90>90</option>
+            <option value=120>120</option>
+            <option value=144>144</option>
+        </select><br>
+
+        <label for="main_camera">Main camera (MP):</label><br>
+        <input type="text" id="main_camera" name="main_camera"><br>          
+
+        <div id="new-inputs"></div>  <!-- New div for the new inputs -->
         <input type="submit" value="Submit">
     </form>
+    <button id="add-input">Add camera</button>
+    <script>
+    $(document).ready(function(){
+        let inputCount = 1;  // Counter for the new inputs
+
+        $("#add-input").click(function(){
+            inputCount++;
+            var newInput = `<label for="new-input-${inputCount}">${inputCount} Rear camera (MP)</label><br>
+                            <input type="text" id="new-input-${inputCount}" name="new-input-${inputCount}"><br>`;
+            $("#new-inputs").append(newInput);
+        });
+    });
+    </script>
 </body>
 </html>
