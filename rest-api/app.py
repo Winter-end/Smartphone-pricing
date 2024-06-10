@@ -1,17 +1,8 @@
 from flask import Flask, render_template, request
-from pymongo import MongoClient
-import pandas as pd
 import numpy as np
 import pickle
 
 app = Flask(__name__)
-db_client = MongoClient('localhost', 27017)
-
-# data = db_client.details
-# storage = data.storage
-#andorid_model = pickle.load(open("../exploratory-analysis/android_model.pkl", "rb"))
-#apple_model = pickle.load(open("../exploratory-analysis/apple_model.pkl", "rb"))
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -36,18 +27,26 @@ def index():
                 sum_MP += int(new_input)
 
         attributes = [front_camera, battery, ram, storage, score, num_cameras, sum_MP, main_camera, scree_size, refresh_rate]
+        apple_attributes = [battery, ram, storage, score, num_cameras, sum_MP, scree_size, refresh_rate]
         data = np.array(attributes, dtype='float64')
+        apple_data = np.array(apple_attributes, dtype='float64')
         data = np.reshape(data, (1, -1))
-
-        print(data)
+        apple_data = np.reshape(apple_data, (1, -1))
+        rate = 0.0036       # przelicznik PKR -> USD
 
         if os == 'android':
             andorid_model = pickle.load(open("../exploratory-analysis/android_model.pkl", "rb"))
             result = andorid_model.predict(data)
+            result *= rate
+            result = round(float(result), 2)
+            result = str(result) + ' USD'
             return render_template('index.html', result=result)
-        elif os == 'apple':
-            apple_model = pickle.load(open("../exploratory-analysis/apple_model.pkl", "rb"))
-            result = apple_model.predict(data)
+        elif os == 'ios':
+            apple_model = pickle.load(open("../exploratory-analysis/apple_model_reduced.pkl", "rb"))
+            result = apple_model.predict(apple_data)
+            result *= rate
+            result = round(float(result), 2)
+            result = str(result) + ' USD'
             return render_template('index.html', result=result)
 
         print(f'OS: {os}, Front camera: {front_camera}, Ram: {ram}, Battery: {battery}, Storage: {storage}, Score: {score}, Screen size: {scree_size}, Refresh rate: {refresh_rate}, Main camera: {main_camera}, New Inputs: {new_inputs}')
